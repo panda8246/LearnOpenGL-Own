@@ -58,6 +58,8 @@ void GLInit() {
 void Loop() {
     while (!glfwWindowShouldClose(window)) 
     {
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
         //双缓冲模式下，交换缓冲，将绘制的图像输出到屏幕
         glfwSwapBuffers(window);
         //检查事件，是回调的入口
