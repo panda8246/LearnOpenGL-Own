@@ -2,12 +2,19 @@
 
 project(LearnOpenGL)
 
+set(SOURCE_SHADER
+    "src/shader/chapter1/frag.f"
+    "src/shader/chapter1/vertex.v"
+)
+
 set(SOURCE_MAIN 
+    "src/shader.h"
     "src/main.cpp"
 )
 
 set(SOURCE 
     ${SOURCE_MAIN}
+    ${SOURCE_SHADER}
 )
 
 add_executable(LearnOpenGL ${SOURCE})

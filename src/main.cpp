@@ -6,6 +6,8 @@
 
 #include <iostream>
 
+#include "shader.h"
+
 GLFWwindow* window;
 int Window_Width = 800;
 int Window_Height = 600;
@@ -14,7 +16,7 @@ int Window_Height = 600;
 unsigned int VBO;
 unsigned int VAO;
 unsigned int EBO;
-unsigned int shader;
+Shader shader;
 
 //顶点
 float vertices[] = {
@@ -29,21 +31,6 @@ unsigned int indices[] = { // 注意索引从0开始!
     0, 1, 3, // 第一个三角形
     1, 2, 3  // 第二个三角形
 };
-
-//shader
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-
-const char* fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-"}\n";
 
 
 //初始化三角形相关
@@ -63,48 +50,13 @@ void DrawInit() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    shader = glCreateProgram();
-    int success;
-    char infoLog[512];
-    //Load Vertex
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
-    glCompileShader(vertexShader);
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    //Load Fragment
-    unsigned int fragShader;
-    fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragShader, 1, &fragmentShaderSource, nullptr);
-    glCompileShader(fragShader);
-    glGetShaderiv(fragShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(fragShader, 512, nullptr, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    //Link
-    glAttachShader(shader, vertexShader);
-    glAttachShader(shader, fragShader);
-    glLinkProgram(shader);
-    glGetProgramiv(shader, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(shader, 512, nullptr, infoLog);
-        std::cout << "ERROR::SHADER::LINK_FAILED\n" << infoLog << std::endl;
-    }
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragShader);
+    shader = Shader("shader/chapter1/vertex.v", "shader/chapter1/frag.f");
     
     glBindVertexArray(0);
 }
 
 void DrawTriangle() {
-    glUseProgram(shader);
+    glUseProgram(shader.ID);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
