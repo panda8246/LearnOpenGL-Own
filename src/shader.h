@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #ifndef SHADER_H
 #define SHADER_H
 
@@ -13,11 +13,11 @@ public:
 	unsigned int ID;
 
     Shader() {}
-    // ¹¹ÔìÆ÷¶ÁÈ¡²¢¹¹½¨×ÅÉ«Æ÷
+    // æ„é€ å™¨è¯»å–å¹¶æ„å»ºç€è‰²å™¨
     Shader(const char* vertexPath, const char* fragmentPath);
-    // Ê¹ÓÃ/¼¤»î³ÌĞò
+    // ä½¿ç”¨/æ¿€æ´»ç¨‹åº
     void use();
-    // uniform¹¤¾ßº¯Êı
+    // uniformå·¥å…·å‡½æ•°
     void setBool(const std::string& name, bool value) const;
     void setInt(const std::string& name, int value) const;
     void setFloat(const std::string& name, float value) const;
@@ -29,34 +29,36 @@ private:
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath)
 {
-    // 1. ´ÓÎÄ¼şÂ·¾¶ÖĞ»ñÈ¡¶¥µã/Æ¬¶Î×ÅÉ«Æ÷
+    // 1. ä»æ–‡ä»¶è·¯å¾„ä¸­è·å–é¡¶ç‚¹/ç‰‡æ®µç€è‰²å™¨
     std::string vertexCode;
     std::string fragmentCode;
     std::ifstream vShaderFile;
     std::ifstream fShaderFile;
-    // ±£Ö¤ifstream¶ÔÏó¿ÉÒÔÅ×³öÒì³££º
+
+    // ä¿è¯ifstreamå¯¹è±¡å¯ä»¥æŠ›å‡ºå¼‚å¸¸ï¼š
     vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try
     {
-        // ´ò¿ªÎÄ¼ş
+        // æ‰“å¼€æ–‡ä»¶
         vShaderFile.open(vertexPath);
         fShaderFile.open(fragmentPath);
         std::stringstream vShaderStream, fShaderStream;
-        // ¶ÁÈ¡ÎÄ¼şµÄ»º³åÄÚÈİµ½Êı¾İÁ÷ÖĞ
+        // è¯»å–æ–‡ä»¶çš„ç¼“å†²å†…å®¹åˆ°æ•°æ®æµä¸­
         vShaderStream << vShaderFile.rdbuf();
         fShaderStream << fShaderFile.rdbuf();
-        // ¹Ø±ÕÎÄ¼ş´¦ÀíÆ÷
-        vShaderFile.close();
-        fShaderFile.close();
-        // ×ª»»Êı¾İÁ÷µ½string
+        // è½¬æ¢æ•°æ®æµåˆ°string
         vertexCode = vShaderStream.str();
         fragmentCode = fShaderStream.str();
+         // å…³é—­æ–‡ä»¶å¤„ç†å™¨
+        vShaderFile.close();
+        fShaderFile.close();
     }
     catch (std::ifstream::failure e)
     {
         std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
     }
+
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
     // 2. compile shaders

@@ -2,19 +2,17 @@
 
 project(LearnOpenGL)
 
-set(SOURCE_SHADER
-    "src/shader/chapter1/frag.f"
-    "src/shader/chapter1/vertex.v"
-)
-
 set(SOURCE_MAIN 
     "src/shader.h"
     "src/main.cpp"
 )
 
+#复制Shader
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/src/shader/" 
+    DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/shader/")
+
 set(SOURCE 
     ${SOURCE_MAIN}
-    ${SOURCE_SHADER}
 )
 
 add_executable(LearnOpenGL ${SOURCE})

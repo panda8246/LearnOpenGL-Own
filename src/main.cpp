@@ -50,6 +50,7 @@ void DrawInit() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
+    //shader = Shader("F:\\Data\\cpp\\LearnOpenGL\\src\\shader\\chapter1\\vertex.v", "F:\\Data\\cpp\\LearnOpenGL\\src\\shader\\chapter1\\frag.f");
     shader = Shader("shader/chapter1/vertex.v", "shader/chapter1/frag.f");
     
     glBindVertexArray(0);
