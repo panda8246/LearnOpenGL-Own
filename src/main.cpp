@@ -17,6 +17,7 @@ int Window_Height = 600;
 unsigned int VBO;
 unsigned int VAO;
 unsigned int EBO;
+unsigned int texture;
 Shader shader;
 
 //顶点
@@ -29,10 +30,10 @@ float vertices[] = {
 
 //纹理坐标
 float texCoords[] = {
-    1.0f, 1.0f,     // 右上角
-    1.0f, 0.0f,     // 右下角
+    2.0f, 2.0f,     // 右上角
+    2.0f, 0.0f,     // 右下角
     0.0f, 0.0f,     // 左下角
-    0.0f, 1.0f,     // 左上角
+    0.0f, 2.0f,     // 左上角
 };
 
 //绘制索引
@@ -58,6 +59,13 @@ void DrawInit() {
     glGenBuffers(1, &EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    //贴图坐标
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_STATIC_DRAW);
+    //解析顶点数据
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
 
     //shader = Shader("F:\\Data\\cpp\\LearnOpenGL\\src\\shader\\chapter1\\vertex.v", "F:\\Data\\cpp\\LearnOpenGL\\src\\shader\\chapter1\\frag.f");
     shader = Shader("shader/chapter1/vertex.v", "shader/chapter1/frag.f");
@@ -68,7 +76,6 @@ void DrawInit() {
     int width, height, nrChannels;
     unsigned char* data = stbi_load("resources/wall.jpg", &width, &height, &nrChannels, 0);
     if (data) {
-        unsigned int texture;
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -97,6 +104,7 @@ void DrawInit() {
 
 void DrawTriangle() {
     glUseProgram(shader.ID);
+    glBindTexture(GL_TEXTURE_2D, texture);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
