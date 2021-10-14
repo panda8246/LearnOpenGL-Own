@@ -17,7 +17,8 @@ int Window_Height = 600;
 unsigned int VBO;
 unsigned int VAO;
 unsigned int EBO;
-unsigned int texture;
+unsigned int texture1;
+unsigned int texture2;
 Shader shader;
 
 //顶点
@@ -67,17 +68,18 @@ void DrawInit() {
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
 
-    //shader = Shader("F:\\Data\\cpp\\LearnOpenGL\\src\\shader\\chapter1\\vertex.v", "F:\\Data\\cpp\\LearnOpenGL\\src\\shader\\chapter1\\frag.f");
     shader = Shader("shader/chapter1/vertex.v", "shader/chapter1/frag.f");
     
     glBindVertexArray(0);
 
+    //OpenGL要求图片底部为Y=0，而一般图片是顶部Y=0，这里让stb_image帮我们加载时翻转一下
+    stbi_set_flip_vertically_on_load(true);
     //加载Texture
     int width, height, nrChannels;
     unsigned char* data = stbi_load("resources/wall.jpg", &width, &height, &nrChannels, 0);
     if (data) {
-        glGenTextures(1, &texture);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glGenTextures(1, &texture1);
+        glBindTexture(GL_TEXTURE_2D, texture1);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         //自动生成多级渐远纹理
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -97,6 +99,39 @@ void DrawInit() {
     else {
         std::cout << "ERROR : Failed to load texture" << std::endl;
     }
+
+    //绑定后释放内存
+    stbi_image_free(data);
+
+    //Texture2
+    data = stbi_load("resources/echo.jpg", &width, &height, &nrChannels, 0);
+    if (data) {
+        glGenTextures(1, &texture2);
+        glBindTexture(GL_TEXTURE_2D, texture2);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        //自动生成多级渐远纹理
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        //以下操作针对当前纹理对象
+        //纹理渲染模式
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+
+        //纹理放大
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);      //不插值
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);       //插值
+        //纹理缩小
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);      //不插值
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);       //插值
+    }
+    else {
+        std::cout << "ERROR : Failed to load texture" << std::endl;
+    }
+    
+    shader.use();
+    shader.setInt("texture1", 0);
+    shader.setInt("texture2", 1);
+
     //绑定后释放内存
     stbi_image_free(data);
     
@@ -104,7 +139,13 @@ void DrawInit() {
 
 void DrawTriangle() {
     glUseProgram(shader.ID);
-    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture1);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texture2);
+
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);

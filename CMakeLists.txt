@@ -47,7 +47,10 @@ add_custom_target(
     #复制贴图(待定)
 )
 
-
-
 # 用add_dependencies將自訂目標列為建置目標的dependency
 add_dependencies(LearnOpenGL copy_shader_files)
+
+
+#纹理不是常修改的东西，放在cmake阶段复制就好
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resources" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+
