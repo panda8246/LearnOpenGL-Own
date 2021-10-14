@@ -2,20 +2,27 @@
 
 project(LearnOpenGL-OWN)
 
+set(SOURCE_STB_IMAGE
+    "deps/stb_image/stb_image.h"
+    "deps/stb_image/stb_image.cpp"
+)
+
 set(SOURCE_MAIN 
     "src/shader.h"
     "src/main.cpp"
 )
 
 set(SOURCE 
+    ${SOURCE_STB_IMAGE}
     ${SOURCE_MAIN}
 )
 
 add_executable(LearnOpenGL ${SOURCE})
 
 
-include_directories("/deps")
-include_directories("/src")
+include_directories(deps)
+include_directories(deps/stb_image)
+include_directories(src)
 
 #glad
 add_subdirectory("deps/glad" EXCLUDE_FROM_ALL)
@@ -37,6 +44,10 @@ add_custom_target(
     copy_shader_files
     # 執行copy指令 cmake -E copy <file>... destination 
     ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/src/shader ${CMAKE_CURRENT_BINARY_DIR}/shader
+    #复制贴图(待定)
 )
+
+
+
 # 用add_dependencies將自訂目標列為建置目標的dependency
 add_dependencies(LearnOpenGL copy_shader_files)

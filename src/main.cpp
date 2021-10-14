@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include "shader.h"
+#include "stb_image.h"
 
 GLFWwindow* window;
 int Window_Width = 800;
@@ -24,6 +25,14 @@ float vertices[] = {
     0.5f, -0.5f, 0.0f,  // 右下角
     -0.5f, -0.5f, 0.0f, // 左下角
     -0.5f, 0.5f, 0.0f   // 左上角
+};
+
+//纹理坐标
+float texCoords[] = {
+    1.0f, 1.0f,     // 右上角
+    1.0f, 0.0f,     // 右下角
+    0.0f, 0.0f,     // 左下角
+    0.0f, 1.0f,     // 左上角
 };
 
 //绘制索引
@@ -54,6 +63,36 @@ void DrawInit() {
     shader = Shader("shader/chapter1/vertex.v", "shader/chapter1/frag.f");
     
     glBindVertexArray(0);
+
+    //加载Texture
+    int width, height, nrChannels;
+    unsigned char* data = stbi_load("resources/wall.jpg", &width, &height, &nrChannels, 0);
+    if (data) {
+        unsigned int texture;
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        //自动生成多级渐远纹理
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        //以下操作针对当前纹理对象
+        //纹理渲染模式
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+
+        //纹理放大
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);      //不插值
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);       //插值
+        //纹理缩小
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);      //不插值
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);       //插值
+    }
+    else {
+        std::cout << "ERROR : Failed to load texture" << std::endl;
+    }
+    //绑定后释放内存
+    stbi_image_free(data);
+    
 }
 
 void DrawTriangle() {
@@ -111,6 +150,7 @@ void GLInit() {
 
     //渲染线框
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 }
 
 //主循环
