@@ -36,6 +36,10 @@ target_link_libraries(LearnOpenGL PRIVATE glfw)
 add_subdirectory("deps/glm" EXCLUDE_FROM_ALL)
 target_link_libraries(LearnOpenGL PRIVATE glm)
 
+#imgui
+add_subdirectory("deps/imgui" EXCLUDE_FROM_ALL)
+target_link_libraries(LearnOpenGL PRIVATE imgui)
+
 
 #复制Shader
 #参考 https://minecraftxwinp.github.io/2017/11/27/%E7%94%A8CMake%E5%9C%A8%E5%BB%BA%E7%BD%AE%E6%99%82%E8%A4%87%E8%A3%BD%E6%AA%94%E6%A1%88%E5%88%B0%E8%BC%B8%E5%87%BA%E5%9F%B7%E8%A1%8C%E6%AA%94%E7%9A%84%E7%9B%AE%E9%8C%84/
